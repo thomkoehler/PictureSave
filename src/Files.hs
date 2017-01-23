@@ -2,7 +2,8 @@
 module Files
 (
    listDir,
-   exifTimeOriginal
+   exifTimeOriginal,
+   createUniqueFilename
 )
 where
 
@@ -12,6 +13,8 @@ import Control.Monad
 import System.FilePath.Glob
 import Data.Time.LocalTime
 import Graphics.HsExif
+import Data.List
+import Data.Maybe
 
 
 listDir :: String -> FilePath -> IO [FilePath]
@@ -28,3 +31,9 @@ exifTimeOriginal file = do
    case exif of
       Right values -> return $ getDateTimeOriginal values
       _ -> return Nothing
+
+
+createUniqueFilename :: [String] -> String -> String
+createUniqueFilename fileNameList fileName = fromJust $ find (\fn -> not (elem  fn fileNameList)) $ fileName : map createFileName (zip (repeat fileName) [1..])
+   where
+      createFileName (name, num) = name ++ "_" ++ show num

@@ -35,7 +35,7 @@ exifTimeOriginal file = do
 
 createUniqueFilename :: [String] -> String -> String
 createUniqueFilename fileNameList fileName =
-   fromJust $ find (\fn -> not (elem  fn fileNameList)) $ fileName : map createFileName (zip (repeat fileName) [1..])
+   fromJust $ find (\fn -> not (elem  fn fileNameList)) $ fileName : map createFileName (zip (repeat fileName) [(1 :: Int)..])
    where
       createFileName (name, num) =
          let
@@ -51,3 +51,5 @@ createUniqueFileNames existNames (name: restNames) =
       uniqueFileName = createUniqueFilename existNames name
    in
       uniqueFileName : createUniqueFileNames (uniqueFileName:existNames) restNames
+
+createUniqueFileNames _ _ = []

@@ -1,10 +1,16 @@
 module Main where
 
-import Files
-import Graphics.HsExif
 import System.FilePath.Windows
+import System.Directory
 import Data.Time.LocalTime
 import Data.Time.Format
+import Data.Foldable
+import Text.Printf
+import System.Environment
+import Control.Monad
+
+import Files
+import Options
 
 
 jpgExt :: String
@@ -12,23 +18,29 @@ jpgExt = "*.jpg"
 
 
 main :: IO ()
-main = copyJpgs "./Temp/src" "./Temp/target"
+main = do
+   args <- getArgs
+   let options = getOptions args
+   if help options
+      then printUsage
+      else copyJpgs options
 
 
-mbLocalTimeToFilename :: Maybe LocalTime -> String -> String
-mbLocalTimeToFilename Nothing oldFileName = oldFileName
-mbLocalTimeToFilename (Just lt) _ = formatTime defaultTimeLocale "%0Y" lt
+mbLocalTimeToFilename :: String -> Maybe LocalTime -> String -> String
+mbLocalTimeToFilename _ Nothing oldFileName = oldFileName
+mbLocalTimeToFilename fileFormat (Just lt) _ = formatTime defaultTimeLocale fileFormat lt
 
 
-copyJpgs :: FilePath -> FilePath -> IO ()
-copyJpgs srcDir targetDir = do
-   srcFiles <- listDir jpgExt srcDir
+copyJpgs :: Options -> IO ()
+copyJpgs (Options sd td ov tff _) = do
+   srcFiles <- listDir jpgExt sd
    srcFileExifInfos <- mapM exifTimeOriginal srcFiles
    let srcFileNames = map takeFileName srcFiles
-
-   print $ zipWith mbLocalTimeToFilename srcFileExifInfos srcFileNames
-
-   targetFiles <- listDir jpgExt targetDir
+   let newSrcFileNames = zipWith (mbLocalTimeToFilename tff) srcFileExifInfos srcFileNames
+   targetFiles <- listDir jpgExt td
    let targetFileNames = map takeFileName targetFiles
-
-   return ()
+   let uniqueSrcFileNames = createUniqueFileNames targetFileNames newSrcFileNames
+   let fullUniqueFileNames = map (td </>) uniqueSrcFileNames
+   forM_ (zip srcFiles fullUniqueFileNames) $ \(srcFile, targetFile) -> do
+      printf "copy from '%s' to '%s'\n" srcFile targetFile
+      unless ov $ copyFileWithMetadata srcFile targetFile

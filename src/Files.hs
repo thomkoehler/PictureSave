@@ -3,7 +3,7 @@ module Files
 (
    listDir,
    exifTimeOriginal,
-   createUniqueFilename
+   createUniqueFileNames
 )
 where
 
@@ -34,6 +34,20 @@ exifTimeOriginal file = do
 
 
 createUniqueFilename :: [String] -> String -> String
-createUniqueFilename fileNameList fileName = fromJust $ find (\fn -> not (elem  fn fileNameList)) $ fileName : map createFileName (zip (repeat fileName) [1..])
+createUniqueFilename fileNameList fileName =
+   fromJust $ find (\fn -> not (elem  fn fileNameList)) $ fileName : map createFileName (zip (repeat fileName) [1..])
    where
-      createFileName (name, num) = name ++ "_" ++ show num
+      createFileName (name, num) =
+         let
+            ext = takeExtension name
+            baseName = dropExtension name
+         in
+            baseName ++ "_" ++ show num ++ ext
+
+
+createUniqueFileNames :: [String] -> [String] -> [String]
+createUniqueFileNames existNames (name: restNames) =
+   let
+      uniqueFileName = createUniqueFilename existNames name
+   in
+      uniqueFileName : createUniqueFileNames (uniqueFileName:existNames) restNames

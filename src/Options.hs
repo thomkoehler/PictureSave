@@ -9,6 +9,7 @@ where
 
 import System.Console.GetOpt
 import Data.Maybe
+import Text.Printf
 
 
 data Options = Options
@@ -23,15 +24,28 @@ data Options = Options
 
 
 defaultOptions :: Options
-defaultOptions = Options "." "." False "Private_%0Y%0m%0d_%0H%0M%0S.jpg" False
+defaultOptions = Options
+   {
+      srcDir = ".",
+      targetDir = ".",
+      onlyView = False,
+      targetFileFormat = "Private_%0Y%0m%0d_%0H%0M%0S.jpg",
+      help = False
+   }
 
 
 options :: [OptDescr (Options -> Options)]
 options =
    [
-      Option "s" [] (OptArg ((\f opts -> opts { srcDir = f }) . fromMaybe "srcDir") "DIR") "source directory (default .)",
-      Option "t" [] (OptArg ((\f opts -> opts { targetDir = f }) . fromMaybe "targetDir") "DIR") "target directory (default .)",
-      Option "f" [] (OptArg ((\f opts -> opts { targetFileFormat = f }) . fromMaybe "targetFileFormat") "Format") "target file format (default Private_%0Y%0m%0d_%0H%0M%0S.jpg)",
+      Option "s" [] (OptArg ((\f opts -> opts { srcDir = f }) . fromMaybe "srcDir") "DIR")
+         (printf "source directory (default %s)" (srcDir defaultOptions)),
+
+      Option "t" [] (OptArg ((\f opts -> opts { targetDir = f }) . fromMaybe "targetDir") "DIR")
+         (printf "target directory (default %s)" (targetDir defaultOptions)),
+
+      Option "f" [] (OptArg ((\f opts -> opts { targetFileFormat = f }) . fromMaybe "targetFileFormat") "Format")
+         (printf "target file format (default %s)" (targetFileFormat defaultOptions)),
+         
       Option "h" ["help"] (NoArg (\opts -> opts { help = True })) "show usage",
       Option "v" ["view"] (NoArg (\opts -> opts { onlyView = True })) "only view actions"
    ]

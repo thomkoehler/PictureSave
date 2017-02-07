@@ -13,11 +13,11 @@ import Data.Maybe
 
 data Options = Options
    {
-      srcDir :: FilePath,
-      targetDir :: FilePath,
-      onlyView :: Bool,
-      targetFileFormat :: String,
-      help :: Bool
+      srcDir :: !FilePath,
+      targetDir :: !FilePath,
+      onlyView :: !Bool,
+      targetFileFormat :: !String,
+      help :: !Bool
    }
    deriving(Show)
 
@@ -31,6 +31,7 @@ options =
    [
       Option "s" [] (OptArg ((\f opts -> opts { srcDir = f }) . fromMaybe "srcDir") "DIR") "source directory (default .)",
       Option "t" [] (OptArg ((\f opts -> opts { targetDir = f }) . fromMaybe "targetDir") "DIR") "target directory (default .)",
+      Option "f" [] (OptArg ((\f opts -> opts { targetFileFormat = f }) . fromMaybe "targetFileFormat") "Format") "target file format (default Private_%0Y%0m%0d_%0H%0M%0S.jpg)",
       Option "h" ["help"] (NoArg (\opts -> opts { help = True })) "show usage",
       Option "v" ["view"] (NoArg (\opts -> opts { onlyView = True })) "only view actions"
    ]

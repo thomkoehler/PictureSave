@@ -1,3 +1,5 @@
+{-# LANGUAGE MultiWayIf #-}
+
 module Main where
 
 import System.FilePath.Windows
@@ -9,6 +11,7 @@ import Text.Printf
 import System.Environment
 import Control.Monad
 
+import Version
 import Files
 import Options
 
@@ -21,9 +24,9 @@ main :: IO ()
 main = do
    args <- getArgs
    let options = getOptions args
-   if help options
-      then printUsage
-      else copyJpgs options
+   if | help options -> printUsage
+      | viewVersion options -> printVersion
+      | otherwise -> copyJpgs options
 
 
 mbLocalTimeToFilename :: String -> Maybe LocalTime -> String -> String
@@ -32,7 +35,7 @@ mbLocalTimeToFilename fileFormat (Just lt) _ = formatTime defaultTimeLocale file
 
 
 copyJpgs :: Options -> IO ()
-copyJpgs (Options sd td ov tff _) = do
+copyJpgs (Options sd td ov tff _ _) = do
    srcFiles <- listDir jpgExt sd
    srcFileExifInfos <- mapM exifTimeOriginal srcFiles
    let srcFileNames = map takeFileName srcFiles
@@ -44,3 +47,6 @@ copyJpgs (Options sd td ov tff _) = do
    forM_ (zip srcFiles fullUniqueFileNames) $ \(srcFile, targetFile) -> do
       printf "copy from '%s' to '%s'\n" srcFile targetFile
       unless ov $ copyFileWithMetadata srcFile targetFile
+
+printVersion :: IO ()
+printVersion = putStrLn version

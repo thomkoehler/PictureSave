@@ -18,7 +18,8 @@ data Options = Options
       targetDir :: !FilePath,
       onlyView :: !Bool,
       targetFileFormat :: !String,
-      help :: !Bool
+      help :: !Bool,
+      viewVersion :: !Bool
    }
    deriving(Show)
 
@@ -30,7 +31,8 @@ defaultOptions = Options
       targetDir = ".",
       onlyView = False,
       targetFileFormat = "Private_%0Y%0m%0d_%0H%0M%0S.jpg",
-      help = False
+      help = False,
+      viewVersion = False
    }
 
 
@@ -40,14 +42,15 @@ options =
       Option "s" [] (OptArg ((\f opts -> opts { srcDir = f }) . fromMaybe "srcDir") "DIR")
          (printf "source directory (default %s)" (srcDir defaultOptions)),
 
-      Option "t" [] (OptArg ((\f opts -> opts { targetDir = f }) . fromMaybe "targetDir") "DIR")
-         (printf "target directory (default %s)" (targetDir defaultOptions)),
+      Option "o" [] (OptArg ((\f opts -> opts { targetDir = f }) . fromMaybe "targetDir") "DIR")
+         (printf "output directory (default %s)" (targetDir defaultOptions)),
 
       Option "f" [] (OptArg ((\f opts -> opts { targetFileFormat = f }) . fromMaybe "targetFileFormat") "Format")
          (printf "target file format (default %s)" (targetFileFormat defaultOptions)),
-         
+
       Option "h" ["help"] (NoArg (\opts -> opts { help = True })) "show usage",
-      Option "v" ["view"] (NoArg (\opts -> opts { onlyView = True })) "only view actions"
+      Option "a" ["actions"] (NoArg (\opts -> opts { onlyView = True })) "only view actions",
+      Option "v" ["version"] (NoArg (\opts -> opts { viewVersion = True })) "view version"
    ]
 
 

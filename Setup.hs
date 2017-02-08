@@ -4,6 +4,7 @@ import Distribution.Simple.Utils(rewriteFile)
 import Distribution.Package(packageVersion)
 import Distribution.Simple.BuildPaths(autogenModulesDir)
 import System.FilePath((</>))
+import System.Directory
 import Data.Version(showVersion)
 
 
@@ -11,6 +12,7 @@ generateVersionModule pkg lbi = do
    let dir = autogenModulesDir lbi
    let version = packageVersion pkg
 
+   createDirectory dir      
    rewriteFile (dir </> "Version.hs") $ unlines
       [
          "module Version where",

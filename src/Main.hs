@@ -17,7 +17,7 @@ import Options
 
 
 jpgExt :: String
-jpgExt = "*.jpg"
+jpgExt = "*.JPG"
 
 
 main :: IO ()

@@ -30,7 +30,7 @@ defaultOptions = Options
       srcDir = ".",
       targetDir = ".",
       onlyView = False,
-      targetFileFormat = "Private_%0Y%0m%0d_%0H%0M%0S.jpg",
+      targetFileFormat = "%0y%0m%0d_%0H%0M%0S.JPG",
       help = False,
       viewVersion = False
    }

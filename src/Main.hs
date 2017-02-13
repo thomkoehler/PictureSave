@@ -17,7 +17,7 @@ import Options
 
 
 jpgExt :: String
-jpgExt = "*.JPG"
+jpgExt = ".jpg"
 
 
 main :: IO ()
@@ -47,6 +47,7 @@ copyJpgs (Options sd td ov tff _ _) = do
    forM_ (zip srcFiles fullUniqueFileNames) $ \(srcFile, targetFile) -> do
       printf "copy from '%s' to '%s'\n" srcFile targetFile
       unless ov $ copyFileWithMetadata srcFile targetFile
+
 
 printVersion :: IO ()
 printVersion = putStrLn version

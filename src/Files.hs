@@ -10,18 +10,19 @@ where
 import System.Directory
 import System.FilePath
 import Control.Monad
-import System.FilePath.Glob
 import Data.Time.LocalTime
 import Graphics.HsExif
 import Data.List
 import Data.Maybe
+import Data.Char
 
 
 listDir :: String -> FilePath -> IO [FilePath]
-listDir strPattern dir = do
+listDir ext dir = do
+   let lowerExt = map toLower ext
    names <- getDirectoryContents dir
-   let pattern = compile strPattern
-   let fullNames = map (dir </>) $ filter (match pattern) names
+   let filteredNames = filter (isSuffixOf lowerExt . map toLower) names
+   let fullNames = map (dir </>) filteredNames
    filterM doesFileExist fullNames
 
 

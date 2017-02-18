@@ -2,7 +2,7 @@
 
 module Main where
 
-import System.FilePath.Windows
+import System.FilePath
 import System.Directory
 import Data.Time.LocalTime
 import Data.Time.Format

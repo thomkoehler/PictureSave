@@ -8,7 +8,6 @@ module Options
 where
 
 import System.Console.GetOpt
-import Data.Maybe
 import Text.Printf
 
 
@@ -39,15 +38,9 @@ defaultOptions = Options
 options :: [OptDescr (Options -> Options)]
 options =
    [
-      Option "s" [] (OptArg ((\f opts -> opts { srcDir = f }) . fromMaybe "srcDir") "DIR")
-         (printf "source directory (default %s)" (srcDir defaultOptions)),
-
-      Option "o" [] (OptArg ((\f opts -> opts { targetDir = f }) . fromMaybe "targetDir") "DIR")
-         (printf "output directory (default %s)" (targetDir defaultOptions)),
-
-      Option "f" [] (OptArg ((\f opts -> opts { targetFileFormat = f }) . fromMaybe "targetFileFormat") "Format")
-         (printf "target file format (default %s)" (targetFileFormat defaultOptions)),
-
+      Option "i" ["indir"] (ReqArg (\f opts -> opts { srcDir = f }) "inputDir") (printf "input directory (default %s)" (srcDir defaultOptions)),
+      Option "o" ["outdir"] (ReqArg (\f opts -> opts { targetDir = f }) "outDir") (printf "output directory (default %s)" (targetDir defaultOptions)),
+      Option "f" ["fileFormat"] (ReqArg (\f opts -> opts { targetFileFormat = f }) "format") (printf "target file format (default %s)" (targetFileFormat defaultOptions)),
       Option "h" ["help"] (NoArg (\opts -> opts { help = True })) "show usage",
       Option "a" ["actions"] (NoArg (\opts -> opts { onlyView = True })) "only view actions",
       Option "v" ["version"] (NoArg (\opts -> opts { viewVersion = True })) "view version"
